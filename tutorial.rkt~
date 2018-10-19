@@ -1,0 +1,162 @@
+#lang racket
+
+(provide tutorial state? can-do? do)
+
+;1) Better way of creating
+;2) Functions with parameters?  (How to communicate usage?)
+;3) Audio feedback.
+;4) Meta-cognitive feedback.
+;5) Persistence.  High scores.
+;6) Adaptation for different students...
+;   Tied to curriculum of the day?
+;   Tied to student's previous time on task?
+;   A little of both?
+;     Do the new game (if any)...
+;     Continue with previous games when done...
+;   Some kind of meta shell???
+;     Pick game.  View stats, etc...
+
+(require 2htdp/image)
+
+(struct p (x y color) #:transparent)
+
+(define colors '(red orange yellow green blue purple))
+
+(define MAX-X 10)
+(define (valid? w)
+  (and (p? w)
+       (< 0 (p-x w))
+       (> MAX-X (p-x w))
+       (< 0 (p-y w))
+       (> MAX-X  (p-y w))
+       (> (length colors) (p-color w))))
+
+(define (move-left w)
+  (struct-copy p w
+               [x (sub1 (p-x w))]))
+
+(define (move-right w)
+  (struct-copy p w
+               [x (add1 (p-x w))]))
+
+(define (move-up w)
+  (struct-copy p w
+               [y (sub1 (p-y w))]))
+
+(define (move-down w)
+  (struct-copy p w
+               [y (add1 (p-y w))]))
+
+(define (next-color w)
+  (define n (add1 (p-color w)))
+
+  (struct-copy p w
+               [color (if (>= n (length colors))
+                          0
+                          n)]))
+
+
+(define/contract (render w)
+  (-> valid? image?)
+
+  (scale 20
+         (place-image
+          (circle 1 'solid (list-ref colors
+                                     (p-color w)))
+          (p-x w) (p-y w)
+          (square 10 'solid 'black))))
+
+
+(define (available-moves w moves)
+  (filter (λ(m)
+            (valid? (m w)))
+          moves))
+
+
+;======== Shell ======
+
+;Params for the shell
+(define start (p (random 1 MAX-X)
+                 (random 1 MAX-X)
+                 (random (length colors))))
+(define end   (p (random 1 MAX-X)
+                 (random 1 MAX-X)
+                 (random (length colors))))
+
+(define moves 0)
+
+(define all-moves
+  (list move-left
+        move-right
+        move-up
+        move-down
+        next-color))
+
+;This shouldn't be defined here.  Should be in the structure above...
+(define (won?)
+  (equal? start end))
+
+
+(define (t s)
+  (if (string? s)
+      (text s 24 'black)
+      s))
+  
+
+(define (state?)
+  (above 
+
+  (t (~a "Moves so far: " moves))
+
+  ;This should be defined above.  Not here...
+  (t
+   (above
+    (beside
+     (render start)
+     (text "  -->  " 24 'black)
+     (render end))
+    (rotate 25
+            (text (if (won?)
+                      (~a "You won!\n(" moves " moves)")
+                      "") 50 'green))))
+
+  (t  (if (won?)
+                 "You can keep playing if you want.  Or press the run button to play again."
+                 "Type (can-do?) to see available moves."))
+                 ))
+
+;Add something to 
+(define (can-do?)
+  (define avail
+    (map ~a
+         (available-moves start all-moves)))
+
+  (apply above
+    (for/list ([a avail])
+      (define f-name
+        (string-replace (second (string-split a ":"))
+                        ">" ""))
+      (t (~a "(do " f-name ")")))))
+
+(define (do m)
+  (define avail
+    (available-moves start all-moves))
+
+  (above
+    (if (member m avail)
+        (begin
+          (set! start (m start))
+          (set! moves (add1 moves))
+          empty-image)
+        (begin
+          (above
+            (t "Can't do that move right now! Only:")
+            (can-do?))))
+    
+    (state?)))
+
+(define tutorial
+  (state?))
+
+
+

@@ -1,0 +1,1 @@
+("7.0" ("bca77eea7bac6c0ca26449a8c59ef819baa4a680" . "8f057936eead563d12ca82af81e93a3d678119ad") (collects #"2htdp" #"image.rkt") (collects #"errortrace" #"errortrace-key.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt") (collects #"ts-curric-puzzles" #"quizzes.rkt"))
