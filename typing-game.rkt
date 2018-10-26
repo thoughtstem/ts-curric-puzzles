@@ -28,11 +28,10 @@
                     'yes)
    
    (yes-no-question (stack
-                     "One more thing before we start."
-                     "This game will be a little bit different each time you play."
+                     "NOTE! This game will be a little bit different each time you play."
                      "For example, here's a weird creature:"
-                     (random-dude)
-                     "But each time you play, you'll see a slightly different weird creature."
+                     (scale 0.5 (random-dude))
+                     "But each time, you'll see a slightly different weird creature."
                      "Do you understand?")
                     'yes)
 
