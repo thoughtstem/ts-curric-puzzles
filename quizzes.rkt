@@ -136,12 +136,7 @@
   (map (compose player-data context-player) (context-history)))
 
 (define (reward p)
-  (frame
-   (fluff
-    (if (positive? (score-change p))
-        (positive-feedback (score-history))
-        (encouragement p))
-    'darkgray)))
+  (frame  (fluff  (feedback-for (score-history))  'darkgray)))
 
 (define (describe-score-change p)
   (define previous-score (player-data (previous-player)))

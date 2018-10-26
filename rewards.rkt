@@ -1,71 +1,83 @@
 #lang racket
 
-(provide positive-feedback)
+(provide feedback-for)
 
 (require 2htdp/image
-         "./creature-congratulations.rkt"
-         "./memes.rkt"
-         "./phrases.rkt")
+         "./score-util.rkt"
+         "./rewards-util.rkt")
 
+;Here, we'll specify a high level policy about rewards,
+;  and their timings -- when students see what kind of feedback.
 
-;Good (various levels)
-  ;Meta-cognitives
-  ;Text
-  ;Creature
-  ;Meme
-  ;New code snippet...
-    ;New assets
-    ;New shapes
-    ;...
+;Goals:
+;  1) Feedback is ALWAY positive and constructive.
+;  2) Sometimes feedback is funny, sometimes it's serious.  Always positive though.
+;  3) Funny will be interleaved with serious.
+;  4) Feedback has different levels of visual impact: normal, or full image.
+;  5) Normal feedback is the most common.  Full image feedback is spaced out.
+;  6) There's enough overall randomness in things to keep students from ignoring the feedback.
 
-;Bad (various levels)
-  ;Metacognitive feedback...
-  ;
+;Various things that might affect feedback:
+;  1) Student just lost points
+;  2) Student just gained points
+;  3) Student is on an upward streak
+;  4) Student is on a downward streak
+;  5) Student has answered X questions
+;  6) Student has been on tast for X minutes
+;(We'll handle the obvious ones for now)
 
-(define (creature top bottom)
-  (creature-congratulations
-   (~a top "\n\n" bottom "\n\nsrsly!!")))
+(define (serious-or-funny-phrase h)
+  (if (even? (length h))
+      (serious-phrase)
+      (funny-phrase)))
 
-(define fancy-fs
-  (list
-   xena
-   fry
-   picard
-   creature))
+(define (serious-or-funny-image h)
+  (if (even? (length h))
+      serious-reward 
+      funny-reward))
 
+(define (phrase-for h)
+  (cond [(just-lost-points h)   (serious-phrase)]
+        [(just-gained-points h) (serious-or-funny-phrase h)]
+        [else (serious-phrase)]))
 
-
-(define (fancy-reward top bottom)
-  (define fancy-f
-    (list-ref fancy-fs (random (length fancy-fs))))
+;Returns image function...
+(define (image-for h)
   
-  (fancy-f top bottom))
+  (cond
+    ;Make them earn the visually intersesting rewards
+    [(answered-less-than 5 h)     normal-reward]
 
-(define (normal-reward top bottom)
-  (text bottom 24 'black))
+    ;Don't let them get cool stuff too often.
+    [(not (answered-multiple-of 3 h))     normal-reward]
 
-(define (positive-feedback score-history)
-  ;Hmmm.  SHould we be checking here for the most recent score change?
-  ;  Or do we assume that the caller did?
-  ;  Or do we put in a contract to enforce it?
+    ;If they lost points, give them a serious background
+    [(just-lost-points h)           serious-reward]
+
+    ;If the gained points, sometimes funny, sometimes serious
+    [(just-gained-points h)  (serious-or-funny-image h)]
+
+    ;Shouldn't be there, but if we missed a case, normal is safe
+    [else normal-reward]))
+
+(define (feedback-for h)
+  (define image-function  (image-for h))
+  (define phrase          (phrase-for h))
+
+  (image-function (first phrase)
+                  (second phrase)))
+
   
-  (define total-questions (length score-history))
-  (define current         (last score-history))
-
-  (define top
-    (~a "my " (opinion) "????"))
-  
-  (define bottom
-    (~a (very-positive-phrase) "!!!"))
-
-  (if (and (< 3 total-questions)
-           (= 0 (remainder total-questions 3)))
-      (fancy-reward top bottom)
-      (normal-reward top bottom)))
-
 
 (module+ test
-  (positive-feedback '(0 1 2 3 4 4 3 4 4 5))
-  (positive-feedback '(0 0 0 0 0 0))
-  (positive-feedback '(0 0 0 0 0 0 0))
+  (feedback-for '(0 0 0 0 0 1))          ;Image, serious
+  (feedback-for '(0 0 0 0 0 1 0 0 1))    ;Image, funny
+  (feedback-for '(0 0 0 0 0 -1))         ;Image, serious
+  (feedback-for '(0 0 0 0 0 -1 0 0 -1))  ;Image, serious
+  
+  (feedback-for '(0 0 0 ))  ;Text, serious (Not enough questions yet)
+
+  (feedback-for '(0 0 0 0 0 0 1))  ;Text, serious
   )
+
+

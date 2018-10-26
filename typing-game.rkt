@@ -88,14 +88,16 @@
                            "You're ready for some coding questions now."
                            "Read the following expression:"
                            (code (circle 40 'solid 'red))
-                           "I claim that this code has EXACTLY two parentheses.  Do you agree?"  )
+                           "I claim that this code has EXACTLY two parentheses."
+                           "Do you agree?")
                     'yes)
 
    
    (yes-no-question (stack "Okay, let's shake things up!"
                            "Read the following expression:"
                            (code (circle (+ 20 20) 'solid 'red))
-                           "I claim that this code has EXACTLY four parentheses.  Do you agree?"  )
+                           "I claim that this code has EXACTLY four parentheses."
+                           "Do you agree?")
                     'yes)))
 
 
