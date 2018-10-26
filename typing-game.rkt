@@ -17,7 +17,7 @@
 
 (define qs
   (list
-   (yes-no-question "Are you ready to test your eye for detail??"   'yes)
+   (yes-no-question "Are you ready to test your eye for detail???"   'yes)
 
    (yes-no-question (stack
                      (row "Nice!  You got " (t "+1" 'darkgreen) " point already")
