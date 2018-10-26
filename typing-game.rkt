@@ -10,14 +10,24 @@
 
 (define r (random 100))
 
+(define my-name-sym
+  (string->symbol
+   (~a (string-join (map ~a (number->pair r)) "-") "-bot-" r)))
+
 (define my-name
-  (t (~a (string-join (map ~a (number->pair r)) "-")
-         "-bot-" r)
-     'purple))
+  (code '#,my-name-sym))
+
+(define favorite-color
+  (choose 'red 'orange 'yellow 'green 'blue 'purple))
+
+(define second-favorite-color
+  (choose 'darkred 'darkgreen 'darkblue 'pink 'brown))
+
 
 (define qs
   (list
    (yes-no-question "Are you ready to test your eye for detail???"   'yes)
+
 
    (yes-no-question (stack
                      (row "Nice!  You got " (t "+1" 'darkgreen) " point already")
@@ -97,8 +107,28 @@
                            (code (circle (+ 20 20) 'solid 'red))
                            "I claim that this code has EXACTLY four parentheses."
                            "Do you agree?")
-                    'yes)))
+                    'yes)
 
+
+   (simple-question (stack "Hey, did you write down my name?"
+                           "If so type: "
+                           (code (answer 'my-name))
+                           (row "But replace the " (code 'my-name) " with my actual name"))
+                    my-name-sym)
+
+   (yes-no-question (stack "Would you like to know my favorite color?"
+                           (row "HINT: The answer is " say-yes))
+                    'yes)
+
+   
+   (yes-no-question (stack (row "Okay, my favorite color's name is:"  (code '#,favorite-color))
+                           "And here's code that makes a circle with that color:"
+                           (code (circle 40 'solid '#,favorite-color))
+                           "Please write the code down (you'll need it later)."
+                           "Are you finished?")
+                    'yes)
+
+))
 
   
 
