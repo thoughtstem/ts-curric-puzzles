@@ -1,27 +1,139 @@
 #lang racket
 
-(provide tutorial)
+(provide the-details-game)
 
-(require 2htdp/image "quizzes.rkt")
+(require happy-names
+         ts-racket
+         2htdp/image
+         "quizzes.rkt")
 
-(define (t s)
-  (text s 24 'black))
 
-(define q1 (question (t "What is bigger than 2 and less than 5?")
-                     (must-equal (or/c 3 4)
-                                 #:reward  (give-points 1)
-                                 #:penalty (give-points -1))))
+(define r (random 100))
+
+(define my-name-sym
+  (string->symbol
+   (~a (string-join (map ~a (number->pair r)) "-") "-bot-" r)))
+
+(define my-name
+  (code '#,my-name-sym))
+
+(define favorite-color
+  (choose 'red 'orange 'yellow 'green 'blue 'purple))
+
+(define second-favorite-color
+  (choose 'darkred 'darkgreen 'darkblue 'pink 'brown))
+
+
+(define qs
+  (list
+   (yes-no-question "Are you ready to test your eye for detail???"   'yes)
+
+
+   (yes-no-question (stack
+                     (row "Nice!  You got " (t "+1" 'darkgreen) " point already")
+                     "This game will ask you a series of questions."
+                     "Sometimes you'll have to type full response."
+                     (row "Sometimes you'll have to answer " say-yes " or " say-no)
+                     "Do you understand?")
+                    'yes)
+   
+   (yes-no-question (stack
+                     "NOTE! This game will be a little bit different each time you play."
+                     "For example, here's a weird creature:"
+                     (scale 0.5 (random-dude))
+                     "But each time, you'll see a slightly different weird creature."
+                     "Do you understand?")
+                    'yes)
+
+   (yes-no-question (stack
+                     "The same thing is true for other questions."
+                     "SOME of the questions will change each time you play."
+                     "SOME (like this one) will stay the same"
+                     "Do you understand?")
+                    'yes)
+
+   (yes-no-question (stack
+                     "Oh, I forgot to tell you my name..."
+                     "(HINT: You might need this later.)"
+                     "My name is: "
+                     my-name
+                     "Did you write it down EXACTLY?")
+                    'yes)
+   
+   
+   (yes-no-question (stack
+                     "Here's a warmup..."
+                     (row "Is the sky sometimes " (t "blue" 'blue) "?"))
+                    'yes)
+
+   (yes-no-question (stack
+                     "Nice! Here's another warmup..."
+                     (row "Is the sky usually " (t "red" 'red) "?"))
+                    'no)
+
+   (simple-question (stack
+                     (row "Okay, you're getting good at " say-yes " and " say-no " questions.")
+                     "Let's try a harder one."
+                     (row "Type the following EXACTLY: " (say-answer 'hello)))
+                    'hello)
+   
+   (simple-question (stack
+                     "Let's try a harder one."
+                     "Type the following EXACTLY: "
+                     (say-answer 'hello-world))
+                    'hello-world)
+   
+   (simple-question (stack
+                     "Let's try a even harder one."
+                     "Type the following EXACTLY: "
+                     (say-answer 'hello-world-my-name-is-bob77))
+                    'hello-world-my-name-is-bob77)
+   
+   (yes-no-question (stack "Pop quiz: Is your name (in real life) bob77?"
+                           "(HINT: Do not lie to me.  I will know.)")
+                    'no)
+
+   (yes-no-question (stack "Okay, you're getting good at paying attention to detail."
+                           "You're ready for some coding questions now."
+                           "Read the following expression:"
+                           (code (circle 40 'solid 'red))
+                           "I claim that this code has EXACTLY two parentheses."
+                           "Do you agree?")
+                    'yes)
+
+   
+   (yes-no-question (stack "Okay, let's shake things up!"
+                           "Read the following expression:"
+                           (code (circle (+ 20 20) 'solid 'red))
+                           "I claim that this code has EXACTLY four parentheses."
+                           "Do you agree?")
+                    'yes)
+
+
+   (simple-question (stack "Hey, did you write down my name?"
+                           "If so type: "
+                           (code (answer 'my-name))
+                           (row "But replace the " (code 'my-name) " with my actual name"))
+                    my-name-sym)
+
+   (yes-no-question (stack "Would you like to know my favorite color?"
+                           (row "HINT: The answer is " say-yes))
+                    'yes)
+
+   
+   (yes-no-question (stack (row "Okay, my favorite color's name is:"  (code '#,favorite-color))
+                           "And here's code that makes a circle with that color:"
+                           (code (circle 40 'solid '#,favorite-color))
+                           "Please write the code down (you'll need it later)."
+                           "Are you finished?")
+                    'yes)
+
+))
+
   
-(define q2 (question (t "What is 2+2?")
-                     (must-equal 4
-                                 #:reward  (give-points 1)
-                                 #:penalty (give-points -5))))
-  
-(define q3 (question (t "What is 3+1?")
-                     (must-equal 4
-                                 #:reward  (give-points 1)
-                                 #:penalty (give-points -5))))
 
+(define (the-details-game)
+  (apply start-quiz qs))
 
-(define (tutorial)
-  (start-quiz q1 q2 q3))
+(module+ test
+  (the-details-game))

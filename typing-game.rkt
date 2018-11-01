@@ -18,10 +18,10 @@
   (code '#,my-name-sym))
 
 (define favorite-color
-  (choose 'red 'orange 'yellow 'green 'blue 'purple))
+  (random-choose 'red 'orange 'yellow 'green 'blue 'purple))
 
 (define second-favorite-color
-  (choose 'darkred 'darkgreen 'darkblue 'pink 'brown))
+  (random-choose 'darkred 'darkgreen 'darkblue 'pink 'brown))
 
 
 (define qs
