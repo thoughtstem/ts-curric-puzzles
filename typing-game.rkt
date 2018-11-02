@@ -1,18 +1,25 @@
 #lang racket
 
-(provide the-details-game)
+(provide the-details-game
+         (rename-out (try-circle circle)))
 
-(require happy-names
-         ts-racket
+(require ts-racket
          2htdp/image
          "quizzes.rkt")
 
-
 (define r (random 100))
+
+;Abstract this...
+(define-syntax-rule (try-circle params ...)
+  (try (circle params ...)))
 
 (define my-name-sym
   (string->symbol
-   (~a (string-join (map ~a (number->pair r)) "-") "-bot-" r)))
+   (~a
+    (random-choose 'happy 'friendly 'smart 'enthusiastic 'purple 'green 'apple 'banana)
+    "-"
+    (random-choose 'curious 'nice 'intelligent 'wise 'orange 'yellow 'tomato 'jelly)
+    "-bot-" r)))
 
 (define my-name
   (code '#,my-name-sym))
@@ -26,6 +33,7 @@
 
 (define qs
   (list
+
    (yes-no-question "Are you ready to test your eye for detail???"   'yes)
 
 
@@ -121,16 +129,40 @@
                     'yes)
 
    
-   (yes-no-question (stack (row "Okay, my favorite color's name is:"  (code '#,favorite-color))
-                           "And here's code that makes a circle with that color:"
+   (yes-no-question (stack (row "Okay, my favorite color's name is: "  (code '#,favorite-color))
+                           "My favorite size is 40."
+                           "And here's code that makes a circle with my favorite color and size"
                            (code (circle 40 'solid '#,favorite-color))
                            "Please write the code down (you'll need it later)."
                            "Are you finished?")
                     'yes)
+   
+   (simple-question (stack "Play time!"
+                           "You can try that code (that you wrote down before) now."
+                           "Try doing different sizes or different colors."
+                           "When you're ready to go on, just write:"
+                           (code (answer 'ready)))
+                    'ready)
+   
+   (simple-question (stack "Okay, show me that you understand how to make circles."
+                           "Type: " (code (answer _____))
+                           "But fill in the blank with the code to produce this"
+                           (circle 60 'solid 'red)
+                           "HINT: This circle has a size of 60.")
+                    
+                     (curry equal? (circle 60 'solid 'red)))
 
+   (simple-question (stack "Nice! You're almost done with this level."
+                           "All you need to do is tell me the code that makes"
+                           "a circle with my favorite color and size."
+                           "Type: " (code (answer _____))
+                           "Fill in the blank with the right code.") 
+                     (curry equal? (circle 40 'solid favorite-color)))
 ))
 
-  
+
+
+
 
 (define (the-details-game)
   (apply start-quiz qs))

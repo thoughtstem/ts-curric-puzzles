@@ -21,7 +21,7 @@
   (length (filter is-brain-img? things)))
 
 (define (brain)
-  (define n (random (num-brains)))
+  (define n (add1 (random (num-brains))))
   (bitmap/file (build-path images "brains" (~a "brain" n ".jpg"))))
 
 

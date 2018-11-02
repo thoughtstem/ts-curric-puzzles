@@ -25,9 +25,13 @@
          yes-no-question
          simple-question
 
-         code)
+         code
 
-(require 2htdp/image
+         start-over
+         try)
+
+(require ts-racket
+         2htdp/image
          (only-in racket/gui play-sound )
          racket/runtime-path
          "./image-util.rkt"
@@ -127,11 +131,6 @@
       (append (context-history (context-previous c))
               (list c))))
 
-
-(define (encouragement p)
-  ;https://www.pinterest.com/sufficientkid/growth-mindset-quotes/?lp=true
-  (t "It's okay.  You can do it!!!"))
-
 (define (score-history)
   (map (compose player-data context-player) (context-history)))
 
@@ -147,7 +146,7 @@
   (define change-amount
     (cond [(positive? change) (t (~a "+" change) 'green)]
           [(negative? change) (t change 'red)]
-          [else (t "No points on that one.")]))
+          [else (t "+0" 'yellow)]))
 
   (define change-amount-icon
     (rotate
@@ -239,17 +238,40 @@
         next-question
         (current-question)))
 
-  ;(if ())
+  (define to-show
+    (or question-to-show
+        (final-scores new-player (current-quiz))))
 
   (update-current!
    (context
     current
-    (show-player new-player question-to-show)
+    (show-player new-player to-show)
     (current-quiz)
-    question-to-show)))
+    to-show))
+  )
+
+(define (start-over)
+  (set! current (first (context-history)))
+
+  (show-me))
+
+(define (final-scores player quiz)
+  (question (stack "You're done!"
+                   (row "You answered " (length quiz) " questions, and got " (player-data player) " points!")
+                   (row "To  again, you can type " (code (start-over)))
+                   (random-dude)
+                   "This random creature is proud of you.")
+            (must-equal #t
+                        #:reward  (give-points 0)
+                        #:penalty (give-points 0))))
 
 
 (define answer answer!)
+
+(define-syntax-rule (try s)
+  (begin
+    (displayln "Nice!  Keep experimenting.")
+    s))
 
 
 
