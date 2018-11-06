@@ -167,7 +167,7 @@
 
 
 (define (pictures-level-1)
-  (apply start-quiz random-questions))
+  (apply start-quiz qs))
 
 (module+ test
   (pictures-level-1))
