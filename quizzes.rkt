@@ -38,7 +38,8 @@
          example-equal?
 
          which-shape-would-this-code-produce
-         which-code-produced-this-shape)
+         which-code-produced-this-shape
+         write-the-code-to-produce-this-shape)
 
 (require ts-racket
          2htdp/image
@@ -429,6 +430,20 @@
           (or/c 'd 'D "d" "D" 4)))
   
   (list-ref answer-letters i))
+
+
+
+(define (write-the-code-to-produce-this-shape element)
+
+  (simple-question (stack "Write the code to make the following shape."
+                          "(HINT: It is NOT cheating to type code and experiment...)"
+                           (example-output element)
+
+                           (row "Type: "  (code (answer _____)))
+                           "Fill in the blank with the correct code."
+                           )
+                    (curry equal? (example-output element))))
+
 
 (define (which-code-produced-this-shape set element)
   (define wrong-answer-bank
