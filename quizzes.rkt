@@ -28,7 +28,17 @@
          code
 
          start-over
-         try)
+         try
+
+
+         define-example-template
+         example-output
+         example-code
+         example-set
+         example-equal?
+
+         which-shape-would-this-code-produce
+         which-code-produced-this-shape)
 
 (require ts-racket
          2htdp/image
@@ -354,4 +364,120 @@
   (p:pict->bitmap
    (p:scale (p:code exp) 2)))
 
+(struct example (code stx) #:transparent)
 
+(define (strip-code-lines l)
+  (define (code-line? x)
+    (and (list? x)
+         (eq? 'code:line (first x))))
+  
+  (if (or (not (list? l)) (empty? l))
+      l
+      (map strip-code-lines
+           (filter (not/c code-line?) l))))
+
+
+
+(define-namespace-anchor a)
+(define ns (namespace-anchor->namespace a))
+ 
+(define (example-output e)
+  (define non-stripped
+    (syntax->datum (example-stx e)))
+
+
+  (define stripped
+    (strip-code-lines non-stripped))
+
+  (eval stripped
+        ns))
+
+(define (example-equal? a b)
+  (equal? (example-output a)
+          (example-output b)))
+
+
+(define-syntax-rule (define-example-template id the-code)
+  (define id (thunk (let ([temp #`the-code])
+                      (example (p:code #,temp) temp)))))
+
+
+(define (example-set n f)
+  (remove-duplicates
+   (map (thunk* (f)) (range n))
+   example-equal?))
+
+
+;Question types:
+
+;Takes a set and a single example in that set:
+; * Which of the following does this code produce?
+; * Which of the following codes produces this output?
+
+;Takes a single example
+; * How many parens does this expression have?
+; * How many primitive shapes are there?
+; * How many shape combiners are there?
+; * Write the code to make this shape.
+; * Copy this expression (just type it)...  WARMUPs...
+
+(define (number->answer-letter i)
+  (define answer-letters
+    (list (or/c 'a 'A "a" "A" 1)
+          (or/c 'b 'B "b" "B" 2)
+          (or/c 'c 'C "c" "C" 3)
+          (or/c 'd 'D "d" "D" 4)))
+  
+  (list-ref answer-letters i))
+
+(define (which-code-produced-this-shape set element)
+  (define wrong-answer-bank
+    (map example-code
+         (filter (not/c (curry example-equal? element)) set)))
+
+  (define right-answer (example-code element))
+
+  (define wrong-answers
+    (take (shuffle wrong-answer-bank) 2))
+
+  (define answers (shuffle (cons right-answer wrong-answers)))
+
+  (define right-answer-letter
+    (number->answer-letter (index-of answers right-answer)))
+  
+  (simple-question (stack "Which code makes this?"
+                          "(HINT: It is NOT cheating to type code and experiment...)"
+                           (example-output element)
+
+                           "Type: "
+                           (row (code (answer 'a)) " for " (p:scale (first answers)  2 ))
+                           (row (code (answer 'b)) " for " (p:scale (second answers) 2 ))
+                           (row (code (answer 'c)) " for " (p:scale (third answers)  2 )))
+                    right-answer-letter))
+
+
+(define (which-shape-would-this-code-produce set element)
+  (define wrong-answer-bank
+    (map example-output
+         (filter (not/c (curry example-equal? element)) set)))
+
+  (define right-answer (example-output element))
+
+  (define wrong-answers
+    (take (shuffle wrong-answer-bank) 3))
+
+  (define answers (shuffle (cons right-answer wrong-answers)))
+
+  (define right-answer-letter
+    (number->answer-letter (index-of answers right-answer)))
+  
+  (simple-question (stack "Which shape will this code make?"
+                          "(HINT: It is NOT cheating to type code and experiment...)"
+                           (p:scale (example-code element) 2)
+
+                           "Type: "
+                           (row (code (answer 'a)) " for   " (first answers))
+                           (row (code (answer 'b)) " for   " (second answers))
+                           (row (code (answer 'c)) " for   " (third answers))
+                           (row (code (answer 'd)) " for   " (fourth answers)))
+                    right-answer-letter))
