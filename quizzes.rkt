@@ -119,8 +119,49 @@
 (define (current-quiz)
   (context-quiz current))
 
+
+(define (percentage->color percentage)
+  (cond [(< percentage 25) 'red]
+        [(< percentage 75) 'yellow]
+        [else 'green]))
+
+(define (progress-bar-for percentage)
+  (define bar (rectangle percentage 20 'solid (percentage->color percentage)))
+
+  (define bg (rectangle  102 22  'solid 'black))
+  
+  (place-image/align 
+   bar
+   1 1
+   "left" "top"
+   bg))
+
+(define (display-progress-bar c)
+  (define total (length (context-quiz c)))
+  (define current (index-of
+                   (context-quiz c)
+                   (context-question c)))
+
+  (define percentage
+    (if (not current)
+        100
+        (* 100
+           (exact->inexact
+            (/ current total)))))
+  
+  (define s (~a "You're " (~a #:max-width 4 percentage)
+                "% complete."))
+
+  (fluff (above/align "left"
+          (text s 24 'black)
+          (progress-bar-for percentage)))
+  )
+
 (define (display-context c)
-  (displayln (display-player (context-player c))) )
+  (displayln
+   (above/align "left"
+    (display-player (context-player c))
+    (display-progress-bar c))))
 
 
 (define (color-for-score d)
@@ -195,11 +236,10 @@
 
 (define (display-player p)
   (above/align "left"
-   (rectangle 10 20 'solid 'white)
+               (rectangle 10 20 'solid 'white)
                (scale 0.75 (show-score p))
-   (rectangle 300 10 'solid 'white)
-   (or (player-last-shown p) empty-image)
-   ))
+               (rectangle 300 10 'solid 'white)
+               (or (player-last-shown p) empty-image)))
 
 (define (update-current! c)
   (set! current c)
