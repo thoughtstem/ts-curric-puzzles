@@ -1,6 +1,6 @@
 #lang racket
 
-(provide the-details-game
+(provide sum-sub-game-2
          (rename-out (try-circle circle)))
 
 (require ts-racket
@@ -128,8 +128,8 @@
                     (curry equal? (or (- 23 (+ 10 5)) (- 23 (+ 5 10)))))
 ))
 
-(define (the-details-game)
+(define (sum-sub-game-2)
   (apply start-quiz qs))
 
 (module+ test
-  (the-details-game))
+  (sum-sub-game-2))
