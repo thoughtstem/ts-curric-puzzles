@@ -1,7 +1,6 @@
 #lang racket
 
-(provide sum-sub-game-1
-         (rename-out (try-circle circle)))
+(provide sum-sub-game-1)
 
 (require ts-racket
          2htdp/image
