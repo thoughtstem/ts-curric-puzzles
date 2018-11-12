@@ -61,9 +61,9 @@
 
    
    (simple-question (stack
-                     "And one more example to practice:"
-                     "what will be the command to add 67 and 32?")
-                    (curry equal? (or (+ 67 32) (+ 32 67))))
+                     "Now, please compute 32 + 67 right in the interaction"
+                     (row "window and wrap answer inside " (code (answer _____)) "."))
+                    (curry equal? 99))
 
    (yes-no-question (stack
                      "Also, in Dr.Racket you can add many numbers together: "

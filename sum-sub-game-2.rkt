@@ -18,11 +18,6 @@
                      "Let’s practice adding and subtracting numbers in Dr. Racket!"
                      (row "Please type " (code (yes)) " to proceed.")) 'yes)
 
-   (yes-no-question (stack
-                     "In this game sometimes you will need"
-                     (row "to type your answer as " (code (yes)) " or " (code (no))".")
-                     (row "Please type " (code (yes)) " to proceed.")) 'yes)
-
    (simple-question (stack
                      "For some questions you'll need to type in Dr. Racket commands: "
                      (row (code (answer _____))", where the blank field is the command.")
@@ -49,7 +44,7 @@
                     (curry equal? (or (+ 5 1) (+ 1 5))))
 
    (yes-no-question (stack
-                     "Very good! Here is subtraction commands:"
+                     "Very good! Here are subtraction commands:"
                      (code (- 2 1))
                      (code (- 30 5 1))
                      "This is equvalent to:"
@@ -64,30 +59,26 @@
                     (curry equal? (or (- 10 5 1) (+ 10 1 5))))
 
    
-   (yes-no-question (stack
-                     "Wonderful! You can add and subtract numbers in Dr. Racket like a pro!"
-                     "Next we will add more parenthesis in our commands:)"
-                     (row "Please type " (code (yes)) " to proceed."))
+   (yes-no-question (stack "Wonderful!"
+                           "You mastered addition and subtraction!"
+                           "You now ready to add more parentheses!")
                     'yes)
 
-   (yes-no-question (stack
-                     "In math we use parenthesis () to show what operation will be done first."
+   (simple-question (stack
+                     "In math we use parentheses () to show what operation will be done first."
                      "For example:"
                      "(4 – 2) + 1"
-                     "2 + 1"
-                     "3"
-                     (row "Please type " (code (yes)) " to proceed."))
-                    'yes)
+                     "= 2 + 1"
+                     "= ?"
+                     (row "What is (4 – 2) + 1 equal to?"))
+                    (curry equal? 3))
 
    (yes-no-question (stack
-                     "In Dr.Racket code in inner parenthesis will be run first."
-                     "For example, the command to do:"
-                     "(4 – 2) + 1 = 3"
-                     "looks like this:"
+                     "In Dr.Racket code in inner parentheses will be run first:"
                      (code (+ (- 4 2) 1))
-                     "code in inner parenthesis will be run first:"
-                     (code (- 4 2))
-                     "and then 1 will be added to the result of that."
+                     ("Here is command breakdown:")
+                     (row (code (- 4 2)) " will be run first")
+                     (row (code (+ 2 1)) " computes final result.")
                      (row "Please type " (code (yes)) " to proceed."))
                     'yes)
 
@@ -112,7 +103,7 @@
                      (code (- 5 ___))
                      (row "Please replace ___ with " (code (+ 3 1 )) "to finish the command.")
                      (row "HINT: please use " (code (answer _____)) " to type your command.")
-                     "I know, it's a lot of parenthesis :)")
+                     "I know, it's a lot of parentheses :)")
                     (curry equal? (or (- 5 (+ 3 1)) (- 5 (+ 1 3)))))
 
    (simple-question (stack
