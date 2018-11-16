@@ -7,7 +7,8 @@
          show-me
          answer
          answer!
-
+         current
+         (struct-out context)
 
          stack
          row
