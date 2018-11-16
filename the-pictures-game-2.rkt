@@ -1,6 +1,6 @@
 #lang racket
 
-(provide pictures-level-2)
+(provide the-pictures-game-2)
 
 (require ts-racket
          2htdp/image
@@ -56,19 +56,13 @@
 (define hard-random-questions-3
   (map write-the-code-to-produce-this-shape hard-set))
 
-
-
-
 (define random-questions
   (append hard-random-questions-1
           hard-random-questions-2
           hard-random-questions-3))
 
-
-
-
-(define (pictures-level-2)
+(define (the-pictures-game-2)
   (apply start-quiz random-questions))
 
 (module+ test
-  (pictures-level-2))
+  (the-pictures-game-2))

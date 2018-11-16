@@ -1,0 +1,68 @@
+#lang racket
+
+(provide pictures-game-2)
+
+(require ts-racket
+         2htdp/image
+         "./quizzes.rkt")
+
+
+
+(require (prefix-in p: pict/code)
+         (prefix-in p: pict))
+
+(define (random-color)
+  (random-choose 'red 'orange 'blue))
+
+(define (random-size)
+  (random-choose 10 30 60))
+
+(define (random-circle-code)
+  `(circle ,(random-size) 'solid ',(random-color)))
+
+
+
+(define-example-template two-circles 
+  (#,(random-choose 'above 'beside)
+     (code:line )
+     #,(random-circle-code)
+     (code:line )
+     #,(random-circle-code)))
+
+(define-example-template three-circles 
+  (#,(random-choose 'above 'beside)
+   (code:line )
+   #,(random-circle-code)
+   (code:line )
+    (#,(random-choose 'above 'beside)
+     (code:line )
+     #,(random-circle-code)
+     (code:line )
+     #,(random-circle-code))))
+
+(define medium-set
+  (example-set 10 two-circles))
+
+(define hard-set
+  (example-set 10 three-circles))
+
+
+(define hard-random-questions-1
+  (map (curry which-code-produced-this-shape hard-set) hard-set))
+
+(define hard-random-questions-2
+  (map (curry which-shape-would-this-code-produce hard-set) hard-set))
+
+(define hard-random-questions-3
+  (map write-the-code-to-produce-this-shape hard-set))
+
+(define random-questions
+  (append hard-random-questions-1
+          hard-random-questions-2
+          hard-random-questions-3))
+
+(define (pictures-game-2)
+  (apply start-quiz random-questions))
+
+(module+ test
+  (pictures-game-2))

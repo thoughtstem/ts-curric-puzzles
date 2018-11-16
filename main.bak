@@ -1,0 +1,26 @@
+#lang racket
+
+(require ts-curric-common)
+(define-quests
+  tutorial
+  circle-game)
+
+(require "./quizzes.rkt")
+(require "./typing-game.rkt")
+(require "./pictures-game.rkt")
+(require "./pictures-game-2.rkt")
+(require "./numbers-game.rkt")
+(require "./numbers-game-2.rkt")
+(require "./racket-basics-game.rkt")
+(require "./shortcuts-game.rkt")
+
+(provide
+ (all-from-out "./quizzes.rkt")
+ (all-from-out "./typing-game.rkt")
+ (all-from-out "./pictures-game.rkt")
+ (all-from-out "./pictures-game-2.rkt")
+ (all-from-out "./numbers-game.rkt")
+ (all-from-out "./numbers-game-2.rkt")
+ (all-from-out "./racket-basics-game.rkt")
+ (all-from-out "./shortcuts-game.rkt")
+ )

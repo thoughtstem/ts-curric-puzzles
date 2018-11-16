@@ -1,6 +1,6 @@
 #lang racket
 
-(provide sum-sub-game-1)
+(provide the-numbers-game)
 
 (require ts-racket
          2htdp/image
@@ -10,7 +10,7 @@
 (define-syntax-rule (try-circle params ...)
   (try (circle params ...)))
 
-; sum-sub-game-1
+; the-numbers-game
 ; Addition and subtraction.
 
 (define qs
@@ -105,8 +105,8 @@
                     (curry equal? (or (- 50 3 21) (- 50 21 3))))
 ))
 
-(define (sum-sub-game-1)
+(define (the-numbers-game)
   (apply start-quiz qs))
 
 (module+ test
-  (sum-sub-game-1))
+  (the-numbers-game))

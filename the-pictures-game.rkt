@@ -1,6 +1,6 @@
 #lang racket
 
-(provide pictures-level-1)
+(provide the-pictures-game)
 
 (require ts-racket
          2htdp/image
@@ -166,8 +166,8 @@
           random-questions))
 
 
-(define (pictures-level-1)
+(define (the-pictures-game)
   (apply start-quiz qs))
 
 (module+ test
-  (pictures-level-1))
+  (the-pictures-game))
